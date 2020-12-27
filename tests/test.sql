@@ -1,6 +1,6 @@
 BEGIN;
 
-INSERT INTO admin (email, password) VALUES
+INSERT INTO users (email, password) VALUES
   ('jimmyface@gmail.com', 'jimmyface'),
   ('admin@lollipop.com', 'secretadmin')
 ;
