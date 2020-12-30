@@ -1,48 +1,40 @@
 BEGIN;
 
-CREATE TABLE admin (
+DROP TABLE IF EXISTS teams, users, members, scenarios, history CASCADE;
+
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   password VARCHAR(225) NOT NULL
 );
 
 CREATE TABLE teams (
   id SERIAL PRIMARY KEY,
   name VARCHAR(225) NOT NULL UNIQUE,
-  size INTEGER NOT NULL,
-  admin_id INTEGER NOT NULL REFERENCES admin(id)
+  size INTEGER NOT NULL DEFAULT 0,
+  users_id INTEGER NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE members (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR(225) NOT NULL,
-  last_name VARCHAR(225) NOT NULL,
+  last_name VARCHAR(225),
   team_id INTEGER NOT NULL REFERENCES teams(id)
 );
 
 CREATE TABLE scenarios (
   id SERIAL PRIMARY KEY,
   name VARCHAR(225) NOT NULL,
-  team_id INTEGER NOT NULL REFERENCES teams(id)
-);
-
-CREATE TABLE team_member_scenario (
-  id SERIAL PRIMARY KEY,
   team_id INTEGER NOT NULL REFERENCES teams(id),
-  member_id INTEGER NOT NULL REFERENCES members(id),
-  scenario_id  INTEGER NOT NULL REFERENCES scenarios(id)
+  time_scenario_created_utc timestamp NOT NULL DEFAULT NOW()
 );
--- need to create a join table instead?
 
 CREATE TABLE history (
   id SERIAL PRIMARY KEY,
-  time_last_selected_utc VARCHAR(225) NOT NULL,
-  team_member_scenario_id INTEGER NOT NULL REFERENCES team_member_scenario(id)
-);
-
-CREATE TABLE lollipop_stack (
-  id SERIAL PRIMARY KEY,
-  team_member_scenario_id INTEGER NOT NULL REFERENCES team_member_scenario(id)
+  time_last_selected_utc timestamp NOT NULL,
+  team_id INTEGER NOT NULL REFERENCES teams(id),
+  member_id INTEGER NOT NULL REFERENCES members(id),
+  scenario_id INTEGER NOT NULL REFERENCES scenarios(id)
 );
 
 COMMIT;
